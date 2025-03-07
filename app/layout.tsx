@@ -6,7 +6,7 @@ import { Inter } from "next/font/google"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SweetHeart",
+  title: "SweetNotes",
   description: "Create beautiful handwritten notes with custom fonts and stickers",
 }
 
