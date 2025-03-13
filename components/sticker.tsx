@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { Trash2, RotateCcw } from "lucide-react"
+import Image from "next/image"
 
 interface StickerProps {
   id: string
@@ -129,7 +130,7 @@ export default function Sticker({
     <div
       id={`sticker-${id}`}
       ref={stickerRef}
-      className={`absolute cursor-move group select-none`}
+      className={`absolute cursor-move group select-none z-30`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -143,13 +144,16 @@ export default function Sticker({
       aria-label="Draggable sticker"
       tabIndex={0}
     >
-      <img
+      <Image
         src={src || "/placeholder.svg"}
         alt="Sticker"
+        width={size}
+        height={size}
         className="w-full h-full object-contain pointer-events-none"
-        onError={(e) => {
-          e.currentTarget.src = "/placeholder.svg?height=50&width=50"
-          e.currentTarget.alt = "Failed to load sticker"
+        unoptimized={true}
+        style={{
+          maxWidth: "100%",
+          height: "auto",
         }}
       />
 

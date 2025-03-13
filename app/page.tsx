@@ -22,7 +22,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen max-w-7xl m-auto">
+    <div className="min-h-screen max-w-6xl m-auto">
       <NotesEditor note={note} onUpdateNote={updateNote} />
     </div>
   )

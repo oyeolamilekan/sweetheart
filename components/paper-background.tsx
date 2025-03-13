@@ -68,7 +68,7 @@ export default function PaperBackground({ style, children }: PaperBackgroundProp
 
   return (
     <div
-      className="h-full rounded-xl overflow-hidden relative shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_14px_28px_rgba(0,0,0,0.15)]"
+      className="h-full rounded-lg overflow-hidden relative transition-all duration-300 shadow-[0_14px_28px_rgba(0,0,0,0.15)]"
       style={backgroundStyle}
     >
       {style === "cornell" && (

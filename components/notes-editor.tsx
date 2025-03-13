@@ -123,6 +123,7 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
   const [showCreditsDialog, setShowCreditsDialog] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
     setContent(note.content)
@@ -344,6 +345,37 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
     }
   }
 
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 1024)
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
+
+  if (isSmallScreen) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-black text-white p-8">
+        <div className="max-w-md text-center space-y-4">
+          <h1 className="text-2xl font-bold">Please Use a Larger Screen</h1>
+          <p className="text-gray-400">
+            This app is designed for laptop and desktop screens. Please access it on a device with a screen width of at least 1024px for the best experience.
+          </p>
+          <a 
+            href="https://mvp.appstate.co" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block mt-4 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            Built by AppState
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-screen bg-white relative isolate">
       {/* Header */}
@@ -427,14 +459,6 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
           </TooltipProvider>
         </div>
         <div className="flex items-center gap-4">
-          <a 
-            href="https://mvp.appstate.co" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-white text-sm hover:text-gray-300 transition-colors"
-          >
-            Built by AppState
-          </a>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -461,7 +485,7 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
                       className="p-2 h-auto aspect-square"
                       onClick={() => handleAddSticker(sticker)}
                     >
-                      <Image 
+                      <Image
                         src={sticker}
                         width={100}
                         height={100}
@@ -484,11 +508,11 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleExport("png")}>
+                    <DropdownMenuItem onClick={() => handleExport("png")} className="cursor-pointer">
                       <FileType className="w-4 h-4 mr-2" />
                       Export as PNG
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleExport("pdf")}>
+                    <DropdownMenuItem onClick={() => handleExport("pdf")} className="cursor-pointer">
                       <FileType className="w-4 h-4 mr-2" />
                       Export as PDF
                     </DropdownMenuItem>
@@ -584,23 +608,14 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
 
         {/* Right side - Preview */}
         <div
-          ref={paperRef}
-          className="relative rounded-xl overflow-hidden p-5 bg-white shadow-md"
+          className="h-full rounded-xl bg-red-50 p-1"
           style={{ backgroundColor }}
         >
-          <PaperBackground style={note.paperStyle}>
-            <div
-              style={{
-                fontFamily: note.font || "Gloria Hallelujah",
-                color: fontColor,
-                fontSize: "18px",
-                lineHeight: getLineHeight(note.paperStyle),
-                padding: getPadding(note.paperStyle),
-              }}
-              className="break-words min-h-full whitespace-pre-wrap"
-            >
-              {content}
-            </div>
+          <div
+            ref={paperRef}
+            className="relative p-9 bg-white z-10 overflow-auto h-full"
+            style={{ backgroundColor }}
+          >
             {stickers.map((sticker) => (
               <Sticker
                 key={sticker.id}
@@ -617,9 +632,35 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
                 onSelect={() => handleStickerSelect(sticker.id)}
               />
             ))}
-          </PaperBackground>
+            <PaperBackground style={note.paperStyle}>
+              <div
+                style={{
+                  fontFamily: note.font || "Gloria Hallelujah",
+                  color: fontColor,
+                  fontSize: "18px",
+                  lineHeight: getLineHeight(note.paperStyle),
+                  padding: getPadding(note.paperStyle),
+                }}
+                className="break-words min-h-full whitespace-pre-wrap"
+              >
+                {content}
+              </div>
+            </PaperBackground>
+          </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-4 text-center">
+        <a
+          href="https://mvp.appstate.co"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-500 text-sm hover:text-gray-700 transition-colors"
+        >
+          Built by AppState
+        </a>
+      </footer>
 
       {/* Export Dialog */}
       <ExportDialog
