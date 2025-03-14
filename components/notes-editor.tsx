@@ -556,7 +556,7 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
                 onChange={handleContentChange}
                 placeholder="Start writing..."
                 className="flex-1 w-full h-full resize-none border-none focus:outline-none text-gray-800 text-base p-4 bg-transparent"
-                maxLength={1000}
+                maxLength={500}
               />
               <div className="flex justify-between items-center p-4 border-t border-gray-200 bg-white">
                 <div className="flex items-center gap-2">
@@ -591,7 +591,7 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
                   </TooltipProvider>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">{charCount}/1000</span>
+                  <span className="text-sm text-gray-500">{charCount}/500</span>
                   <Button
                     variant="ghost"
                     size="sm"
