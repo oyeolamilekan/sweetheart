@@ -17,6 +17,7 @@ import ExportDialog from "./export-dialog"
 import { ColorPicker } from "./color-picker"
 import Image from "next/image"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { trackExportEvent } from '@/app/actions'
 
 interface NotesEditorProps {
   note: Note
@@ -279,6 +280,12 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
     if (!paperRef.current) return
 
     try {
+      await trackExportEvent('note_export_started', { 
+        format,
+        font: note.font,
+        paperStyle: note.paperStyle
+      })
+
       const canvas = await html2canvas(paperRef.current, {
         scale: 2,
         useCORS: true,
@@ -291,6 +298,12 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
         link.href = image
         link.download = "handwritten-note.png"
         link.click()
+        
+        await trackExportEvent('note_export_completed', { 
+          format: 'png',
+          font: note.font,
+          paperStyle: note.paperStyle
+        })
       } else if (format === "pdf") {
         const imgData = canvas.toDataURL("image/png")
         const pdf = new jsPDF({
@@ -300,11 +313,23 @@ export default function NotesEditor({ note, onUpdateNote }: NotesEditorProps) {
         })
         pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height)
         pdf.save("handwritten-note.pdf")
+        
+        await trackExportEvent('note_export_completed', { 
+          format: 'pdf',
+          font: note.font,
+          paperStyle: note.paperStyle
+        })
       }
 
       setExportedFormat(format)
       setShowExportDialog(true)
     } catch (error) {
+      await trackExportEvent('note_export_error', { 
+        format,
+        error: error?.toString(),
+        font: note.font,
+        paperStyle: note.paperStyle
+      })
       console.error("Error exporting image:", error)
     }
   }

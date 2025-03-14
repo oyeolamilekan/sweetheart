@@ -25,13 +25,9 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        {children}
-        <Analytics />
+          {children}
+          <Analytics />
       </body>
     </html>
   )
 }
-
-
-
-import './globals.css'
