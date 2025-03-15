@@ -17,7 +17,7 @@ export default function Home() {
     stickers: [
       {
         id: "default",
-        src: "/image1.png",
+        src: "/image4.png",
         position: { x: 130, y: 500 },
         rotation: 0,
         size: 50,
