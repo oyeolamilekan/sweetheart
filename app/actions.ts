@@ -2,12 +2,10 @@
 
 import { PostHog } from 'posthog-node'
 
-const posthog = process.env.NODE_ENV === 'production' 
-  ? new PostHog(
+const posthog = new PostHog(
       process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       { host: process.env.NEXT_PUBLIC_POSTHOG_HOST }
     )
-  : null
 
 export async function trackExportEvent(eventName: string, data: {
   format: string,
