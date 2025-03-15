@@ -13,8 +13,16 @@ export default function Home() {
     font: "Gloria Hallelujah",
     paperStyle: "college-ruled",
     fontColor: "#000000",
-    backgroundColor: "#ffffff",
-    stickers: [], // Initialize with an empty array
+    backgroundColor: "#fde047",
+    stickers: [
+      {
+        id: "default",
+        src: "/image1.png",
+        position: { x: 130, y: 500 },
+        rotation: 0,
+        size: 50,
+      }
+    ],
   })
 
   const updateNote = (updatedNote: Note) => {
