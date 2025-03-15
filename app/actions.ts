@@ -15,6 +15,8 @@ export async function trackExportEvent(eventName: string, data: {
   paperStyle: string,
   error?: string
 }) {
+  console.log(process.env.NODE_ENV)
+  
   try {
     posthog?.capture({
       distinctId: 'sweatheart',
