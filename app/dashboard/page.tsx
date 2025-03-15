@@ -1,5 +1,6 @@
 import { Redis } from '@upstash/redis'
 import { formatDistanceToNow } from 'date-fns'
+import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 
 const redis = new Redis({
   url: process.env.NEXT_PUBLIC_UPSTASH_REDIS_REST_URL!,
@@ -64,6 +65,27 @@ export default async function Dashboard({
     }
   })
 
+  // Calculate 24h metrics
+  const last24h = new Date()
+  last24h.setHours(last24h.getHours() - 24)
+  
+  const recentEvents = parsedEvents.filter(event => new Date(event.timestamp) > last24h)
+  const previousEvents = parsedEvents.filter(event => {
+    const date = new Date(event.timestamp)
+    return date <= last24h && date > new Date(last24h.getTime() - 24 * 60 * 60 * 1000)
+  })
+
+  const getGrowthRate = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0
+    return ((current - previous) / previous) * 100
+  }
+
+  const metrics24h = {
+    total: recentEvents.length,
+    previous: previousEvents.length,
+    growth: getGrowthRate(recentEvents.length, previousEvents.length)
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
@@ -73,7 +95,20 @@ export default async function Dashboard({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-gray-500 text-sm">Total Exports</h3>
-            <p className="text-3xl font-bold">{metrics.total}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-3xl font-bold">{metrics.total}</p>
+              <div className={`flex items-center text-sm ${
+                metrics24h.growth > 0 ? 'text-green-600' : metrics24h.growth < 0 ? 'text-red-600' : 'text-gray-600'
+              }`}>
+                {metrics24h.growth > 0 ? (
+                  <ArrowUpIcon className="w-4 h-4" />
+                ) : metrics24h.growth < 0 ? (
+                  <ArrowDownIcon className="w-4 h-4" />
+                ) : null}
+                <span>{Math.abs(metrics24h.growth).toFixed(1)}%</span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Last 24h: {metrics24h.total}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-gray-500 text-sm">Success Rate</h3>
@@ -104,6 +139,24 @@ export default async function Dashboard({
                 <div key={font} className="bg-gray-50 p-4 rounded-lg">
                   <div className="text-sm text-gray-500">Font</div>
                   <div className="font-medium" style={{ fontFamily: font }}>{font}</div>
+                  <div className="text-2xl font-bold mt-1">{count}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Paper Style Usage Analytics */}
+        <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold">Paper Style Usage</h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {Object.entries(metrics.byPaperStyle).sort((a, b) => b[1] - a[1]).map(([style, count]) => (
+                <div key={style} className="bg-gray-50 p-4 rounded-lg">
+                  <div className="text-sm text-gray-500">Style</div>
+                  <div className="font-medium">{style}</div>
                   <div className="text-2xl font-bold mt-1">{count}</div>
                 </div>
               ))}
