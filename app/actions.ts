@@ -1,11 +1,11 @@
 'use server'
 
-import { PostHog } from 'posthog-node'
+import { Redis } from '@upstash/redis'
 
-const posthog = new PostHog(
-      process.env.NEXT_PUBLIC_POSTHOG_KEY!,
-      { host: process.env.NEXT_PUBLIC_POSTHOG_HOST }
-    )
+const redis = new Redis({
+  url: process.env.NEXT_PUBLIC_UPSTASH_REDIS_REST_URL!,
+  token: process.env.NEXT_PUBLIC_UPSTASH_REDIS_REST_TOKEN!,
+})
 
 export async function trackExportEvent(eventName: string, data: {
   format: string,
@@ -13,14 +13,15 @@ export async function trackExportEvent(eventName: string, data: {
   paperStyle: string,
   error?: string
 }) {
-  console.log(posthog)
-
   try {
-    posthog?.capture({
-      distinctId: 'sweatheart',
+    const timestamp = new Date().toISOString()
+    const logEntry = {
+      timestamp,
       event: eventName,
-      properties: data
-    })
+      ...data
+    }
+    
+    await redis.lpush('app_events', JSON.stringify(logEntry))
   } catch (error) {
     console.error('Failed to track event:', error)
   }
