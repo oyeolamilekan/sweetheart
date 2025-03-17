@@ -9,6 +9,24 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "SweetNotes",
   description: "Create beautiful handwritten notes with custom fonts and stickers",
+  openGraph: {
+    title: "SweetNotes",
+    description: "Create beautiful handwritten notes with custom fonts and stickers",
+    images: [
+      {
+        url: "/seo-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SweetNotes - Create beautiful handwritten notes",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SweetNotes",
+    description: "Create beautiful handwritten notes with custom fonts and stickers",
+    images: ["/seo-image.png"],
+  },
 }
 
 export default function RootLayout({
